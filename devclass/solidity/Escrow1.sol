@@ -1,13 +1,13 @@
-pragma solidity ^0.4.0;
+pragma solidity ^0.5.0;
 
 contract Escrow {
-	address seller;
-	address buyer;
+	address payable seller;
+	address payable buyer;
 	uint price;
 	enum State { Created, Confirmed, Disabled }
 	State state;
 	
-	function Escrow () public payable {
+	constructor () public payable {
 		seller = msg.sender;
 		price = msg.value / 2 ;
 	}
@@ -25,7 +25,7 @@ contract Escrow {
 		require (msg.sender == buyer);
 
 		buyer.transfer (price);
-		seller.transfer (this.balance);
+		seller.transfer (address(this).balance);
 		state = State.Disabled;
 	}
 
@@ -34,7 +34,7 @@ contract Escrow {
 		require (msg.sender == seller);
 
 		buyer.transfer (2 * price);
-		seller.transfer (this.balance);
+		seller.transfer (address(this).balance);
 		state = State.Disabled;
 	}
 }
